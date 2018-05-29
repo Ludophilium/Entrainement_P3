@@ -20,13 +20,13 @@ A faire :
             — Attr : name, structure_txt, structure_list, sprites ?
             — Meth : structure_txt_to_struct_list(generate), version_graphique
         
-        - Fenetre_de_jeu ? | S'il y en a qu'une seule (et absolument une), pourquoi générer une classe fenetre ? | Mais il n'y a qu'un niveau aussi et pourtant on a bien créé une classe pour... ? | Et puis, créer une classe, c'est aussi structurer un programme. | Mais comment on fait pour la manipuler sinon ? Si on en fait un objet, on ne pourra appeler qu'une série limitée de méthodes dessus et certainement pas celles de Pygame. | A MOINS QUE... Faut tester. 
+        — [OK] Fenetre_de_jeu ? | S'il y en a qu'une seule (et absolument une), pourquoi générer une classe fenetre ? | Mais il n'y a qu'un niveau aussi et pourtant on a bien créé une classe pour... ? | Et puis, créer une classe, c'est aussi structurer un programme. | Mais comment on fait pour la manipuler sinon ? Si on en fait un objet, on ne pourra appeler qu'une série limitée de méthodes dessus et certainement pas celles de Pygame. | A MOINS QUE... Faut tester. 
             Inst : Fenetre_jeu
             Attr : resolution, icone, titre
             Metho : generation (avec pygame.display.set_mode()), rafraichissement() ?
 
-    Ok pour les différentes classes, du moins de mon expérience, mais par quoi on commence ?
+— Ok pour les différentes classes, du moins de mon expérience, mais par quoi on commence ?
 
-        — Logiquement par la base et donc par l'affichage fenetre, la génération d'un niveau, la capacité à fermer fenêtre... Donc les classes : fenetre, niveau et la fonction main().
+    — Logiquement par la base et donc par l'affichage fenetre, la génération d'un niveau, la capacité à fermer fenêtre... Donc les classes : fenetre, niveau et la fonction main().
 
 — Trouver un moyen d'expliquer les règles du jeu...
