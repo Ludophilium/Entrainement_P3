@@ -65,8 +65,8 @@ class Personnage : #Comment créer McGuyver et le garde ?
         self.ko = False
         
     def afficher (self) : #Tiens, j'ai oublié ça. Et comme c'est commun aux deux classes il faut le mettre ici... | sprite_pth = "goomba.png" ou "dk.png"
-        sprite_pygmfriendly = self.sprite.convert() #Autre manière de régler le problème posé par le fait de mettre .convert() à self.sprite
-        Fenetre.FENETRE.blit(sprite_pygmfriendly, self.position)
+        sprite_pf = self.sprite.convert() #Autre manière de régler le problème posé par le fait de mettre .convert() à self.sprite
+        Fenetre.FENETRE.blit(sprite_pf, self.position)
         #print(type(sprite_perso))
 
 class Joueur (Personnage) : #Avoir sa propre classe, si ÇA c'est pas la classe 😎
