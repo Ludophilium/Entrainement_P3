@@ -27,7 +27,7 @@ A faire :
                 — Deux classes hiérachisées, l'une étant l'enfant de l'autre || Option possible, qui résout les problèmes à avoir deux classes distinctes tout en permettant au gardien et à Guyver d'avoir leurs méthodes et attributs distincts... 
                    
         
-        - Items | 
+        - [OK] Items | 
             — Inst : aiguille, tube_plastique, ether | 
             — Attr : nom, position_sur_terrain (dont aucune donc None ?, à moins de créer un attribut est_présent), sprite_item | 
             — Meth : apparaitre, disparaitre.
