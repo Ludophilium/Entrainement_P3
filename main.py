@@ -5,6 +5,8 @@ Il faut désormais implémenter McGuyver, le garde et faire en sorte que MC Guyv
 import sys
 import pygame
 
+import random 
+
 #pygame.init() #Pas très "propre" mais au moins ça contre les problèmes que sa non-initialisation pourrait causer. 
 #import pygame.locals est aussi importable ou plutôt sa forme "from pygame.locals import *" histoire que je puisse utiliser ses constantes et méthodes sans devoir mettre pygame. devant. Si on refuse ceci on ferait mieux de juste importer pygame.
 
@@ -34,7 +36,10 @@ class Niveau : #Après pourra-t-on faire : Niveau().generation().affichage() pou
     @property
     def listver (self) : 
         with open(self.textver_pth) as f : 
-            return f.readlines() #['wwwwwwwGwwwwwww\n', 'wwwwwww0wwwwwww\n',...] où chaque membre est un str qui contient une ligne du fichier. 
+            l = list()
+            for x in f.readlines() : #['wwwwwwwGwwwwwww\n', 'wwwwwww0wwwwwww\n',...] où chaque membre est un str qui contient une ligne du fichier.
+                l += [list(x.strip('\n'))] #supprimons ce '/n' avec .strip(). On avait aussi .splitlines() mais le pb est qu'il transformait la x en une liste, empechant de  faire de chaque chr du str un membre d'une liste pour le modif plus tard.
+            return l
     
     def afficher(self) : #peut-être un argument supplémentaire, listver...
         fond_pf = self.fond.convert()
@@ -88,7 +93,47 @@ class Personnage : #Comment créer McGuyver et le garde ?
         #print(type(sprite_perso))
 
 class Item : 
-    """Bon, maintenant on travaille sur la classe qui contient les objets. Mais que devons nous faire ?"""
+    
+    """Bon, maintenant on travaille sur la classe qui contient les objets. Mais que devons nous faire ?
+    
+    Créer la classe pour gérer les items.
+    Attr : recupere (bool, default False), position, sprite
+    meth : positionner(), afficher() """
+
+    """Très probable qu'on doive faire rentrer, ou le niveau tout entier, pour pouvoir utiliser ses méthodes."""
+
+    POSITIONS_VAL = list() #Mis ici pour que la liste soit commune à toutes les instances et ne change surtout pas après chaque création d'instance. 
+    
+    def __init__(self, rang_item, sprite_pth) :
+        self.rang = rang_item
+        self.position = self.POSITIONS_VAL[rang_item-1]
+        self.recupere = False
+        self.sprite = pygame.image.load(sprite_pth)
+    
+    @classmethod
+    def positionner(cls, nombre_item, niveau_listver) :
+        
+        positions_pos = list()
+
+        for y, a in enumerate(niveau_listver) : 
+            for x, b in enumerate(a) :
+                if b == '0' : 
+                    positions_pos += [[x,y]]
+        
+        while len(cls.POSITIONS_VAL) < nombre_item : 
+            a = random.choice(positions_pos)
+            if a not in cls.POSITIONS_VAL : 
+                cls.POSITIONS_VAL += [a] 
+
+    @property
+    def position_pf(self) : 
+        return list(x*Fenetre.COTE_SPRITE for x in self.position)
+        #conversion des coordonnées sous la forme (x,y) pour faciliter les opérations avec pygame. Sous cette forme, chaque unité vaut un pixel (ou presque). 
+    
+    def afficher(self) :
+        sprite_pf = self.sprite.convert_alpha() 
+        Fenetre.FENETRE.blit(sprite_pf, self.position_pf)
+        #print("item {} : {}".format(self.rang, self.POSITIONS_VAL))
 
 class Joueur (Personnage) : #Avoir sa propre classe, si ÇA c'est pas la classe 😎
     def __init__(self, sprite_pth, position, niveau) : #Alors, vais-je avoir besoin de __super__().__init__() ou je pourrais accéder aux attributs de la classe mère sans... | Réponse : J'ai overridé le constructeur originel, donc faut bien ce super() avant (et pas __super__())
@@ -100,9 +145,9 @@ class Joueur (Personnage) : #Avoir sa propre classe, si ÇA c'est pas la classe 
 
     def deplacer(self, direction) : #On ne gère ici ni l'appui, ni l'affichage. Tout ce qu'on change c'est la position en fait. | On reprend l'implémentation des contraintes mur après — ' or
 
-        if direction == 'droite' and self.X+1<len(self.nl[0])-1 and self.nl[self.Y][self.X+1] != 'w' : 
+        if direction == 'droite' and self.X+1<len(self.nl[0]) and self.nl[self.Y][self.X+1] != 'w' : 
             self.position[0] += 1 #Ex : (7,0) > (8,0)
-            print("valeur de len(self.nl[0])-1 : {}".format(len(self.nl[0])-1))
+            print("valeur de len(self.nl[0]) : {}".format(len(self.nl[0])))
 
         if direction == 'bas' and self.Y+1 < len(self.nl) and self.nl[self.Y+1][self.X] != 'w' : 
             self.position[1] += 1 #Ex : [7,0] > [7,1].
@@ -133,7 +178,11 @@ def main() :
     garde = Personnage("kd.png",[7,14]) #Pas de tuples ! La position ne peut pas changer !!
     heros = Joueur("dk.png",[7,0], niveau_1)
     
-    print(niveau_1.listver)
+    Item.positionner(3,niveau_1.listver)
+
+    item1 = Item(1, "item.png")
+    item2 = Item(2, "item.png")
+    item3 = Item(3, "item.png")
 
     niveau_1.afficher() #Quand je le mets dans la boucle, ça refait la construction à chaque tour... Au niveau où on en est, pas encore nécessaire, mais ça risque de poser des problèmes à l'avenir.
 
@@ -169,7 +218,13 @@ def main() :
 
         niveau_1.afficher() #Pour éviter que le perso se dédouble... Mais il n'y a pas de fond dans mon cas, donc ça ne marche pas encore. 
         garde.afficher() #Si garde dernier à être affiché, lui cacher avatar joueur.
-        heros.afficher() 
+        
+        
+        item1.afficher()
+        item2.afficher()
+        item3.afficher()
+
+        heros.afficher()
 
         Fenetre.rafraichissement()
 
