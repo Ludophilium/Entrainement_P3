@@ -1,23 +1,19 @@
-"""Maintenant qu'on a créé main(), les classes fenetre et niveau, et réussi à faire communiquer ces classes ensemble et en conséquence à afficher le labyrinthe... 
-
-Il faut désormais implémenter McGuyver, le garde et faire en sorte que MC Guyver gagne quand il "touche" le gardien"""
 
 import sys
 import pygame
 import random 
 import time
 
-#import pygame.locals 
-#pygame.init() #Contre les problèmes que sa non-initialisation pourrait causer. 
+pygame.init()  
 
 class Fenetre :  
     
     TITRE = "Project (Mc)GYVR"  
-    COTE_SPRITE = 30 #30 parce que le sprite de travail fait 30x30 et qu'une cellule fera sans doute 30x30.
-    RESOLUTION = [15*COTE_SPRITE,15*COTE_SPRITE] #15 parce que la fenetre doit contenir 15 sprites sur la longueur comme sur la largeur.
+    COTE_SPRITE = 30 
+    RESOLUTION = [15*COTE_SPRITE,15*COTE_SPRITE] 
     ICONE_PTH = pygame.image.load("mur.png") 
 
-    FENETRE = pygame.display.set_mode(RESOLUTION) #Et si l'utilisateur veut que la fenetre soit RESIZABLE (pygame.RESIZABLE) ?
+    FENETRE = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE) 
     TITLE_FEN = pygame.display.set_caption(TITRE)
     ICONE_FEN = pygame.display.set_icon(ICONE_PTH.convert_alpha())
 
@@ -31,6 +27,7 @@ class Niveau :
         self.textver_pth = textver_pth
         self.fond = pygame.image.load("fond.jpg")
         self.sprite_mur = pygame.image.load("mur.png") 
+    
     @property
     def listver (self) : 
         with open(self.textver_pth) as f : 
@@ -46,7 +43,7 @@ class Niveau :
         Fenetre.FENETRE.blit(fond_pf, [0,0]) 
 
         for y, a in enumerate(self.listver) : 
-            for x,b in enumerate(a) : #enumerate(a) = (0, 'w'), (1, 'w'),...
+            for x,b in enumerate(a) : 
                 if b == 'w' : 
                     Fenetre.FENETRE.blit(sprite_mur_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE]) 
 
@@ -54,11 +51,11 @@ class Personnage :
   
     def __init__(self, sprite_pth, position) :
         self.sprite = pygame.image.load(sprite_pth)
-        self.position = position #sous la forme (X,Y) 
+        self.position = position 
         self.ko = False
         
     @property
-    def position_pf(self) : #Sous la forme (x,y)pour faciliter les opérations avec pygame. Sous cette forme, chaque unité vaut un pixel (ou presque).
+    def position_pf(self) : 
         return list(x*Fenetre.COTE_SPRITE for x in self.position)
       
     @property
@@ -78,27 +75,23 @@ class Joueur (Personnage) :
     def __init__(self, sprite_pth, position, niveau) : 
         super().__init__(sprite_pth, position) 
         self.objets = list()
-        self.nl = niveau.listver #Une manière de contourner le problème posé par l'impossibilité d'appeler directement niveau_1.listver() dans la fonction deplacer
+        self.nl = niveau.listver 
 
-    """La prochaine fois, implémentez ces méthodes exclusives : se déplacer, ramasser objet, endormir garde"""
-
-    def deplacer(self, direction) : #On ne gère ici ni l'input utilisateur, ni l'affichage. Tout ce qu'on change c'est la position en fait. 
+    def deplacer(self, direction) : 
 
         if direction == 'droite' and self.X+1<len(self.nl[0]) and self.nl[self.Y][self.X+1] != 'w' : 
-            self.position[0] += 1 #Ex : (7,0) > (8,0)
-            #print("valeur de len(self.nl[0]) : {}".format(len(self.nl[0])))
+            self.position[0] += 1 
 
         if direction == 'bas' and self.Y+1 < len(self.nl) and self.nl[self.Y+1][self.X] != 'w' : 
             self.position[1] += 1 
-            #print("valeur de len(self.nl) : {}".format(len(self.nl))) 
-
+          
         if direction == 'haut' and self.Y-1 >= 0 and self.nl[self.Y-1][self.X] != 'w' : 
             self.position[1] -= 1
 
         if direction == 'gauche' and self.X-1 >=0 and self.nl[self.Y][self.X-1] != 'w' : 
             self.position[0] -= 1
 
-    def ramasser_objet(self, *items) : #*items est un tuple contenant les arguments qu'on a passé lors de l'appel de ramasser_objet
+    def ramasser_objet(self, *items) : 
         
         if self.position in Item.POSITIONS_VAL :
             for item in items :
@@ -119,12 +112,12 @@ class Joueur (Personnage) :
                 self.ko = True
                 for x in range(15) :
                     print("What... What have you done...")
-                pygame.time.wait(3*1000)
-                time.sleep(3)
+                #pygame.time.wait(1*1000)
+                #time.sleep(1)
 
 class Item : 
 
-    POSITIONS_VAL = list() #Mis ici pour que la liste soit commune à toutes les instances et ne change surtout pas après chaque création d'instance. 
+    POSITIONS_VAL = list() 
     
     def __init__(self, rang_item, sprite_pth) :
         self.rang = rang_item
@@ -154,11 +147,8 @@ class Item :
         sprite_pf = self.sprite.convert_alpha() 
         if not self.recupere : 
             Fenetre.FENETRE.blit(sprite_pf, self.position_pf)
-        #print("item {} : {}".format(self.rang, self.POSITIONS_VAL))
-
 
 def main() :
-
 
     niveau_1 = Niveau("level_1.txt")
     garde = Personnage("kd.png",[7,14]) 
@@ -170,7 +160,7 @@ def main() :
     item2 = Item(2, "item.png")
     item3 = Item(3, "item.png")
 
-    niveau_1.afficher() #Quand je le mets dans la boucle, ça refait la construction à chaque tour... 
+    niveau_1.afficher() 
 
     while heros.ko == False :
 
@@ -178,32 +168,23 @@ def main() :
 
         for evt in pygame.event.get():
             if evt.type == pygame.QUIT or evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE : 
-                print("Macron : Se dire \"Au revoir\" de cette façon, n'est-ce pas quelque peu croquignolesque ?")
                 pygame.quit()
                 sys.exit()
 
             if evt.type == pygame.KEYDOWN and evt.key == pygame.K_DOWN : 
                 heros.deplacer("bas")
-                #print(heros.position)
-                #print(heros.position_pf)
-
+               
             if evt.type == pygame.KEYDOWN and evt.key == pygame.K_RIGHT : 
                 heros.deplacer("droite")
-                #print(heros.position)
-                #print(heros.position_pf)
             
             if evt.type == pygame.KEYDOWN and evt.key == pygame.K_UP : 
                 heros.deplacer("haut")
-                #print(heros.position)
-                #print(heros.position_pf)
 
             if evt.type == pygame.KEYDOWN and evt.key == pygame.K_LEFT : 
                 heros.deplacer("gauche")
-                #print(heros.position)
-                #print(heros.position_pf)
 
-        niveau_1.afficher() #Pour éviter que le perso ne se dédouble... S'il n'y pas de fond, ça ne marche pas.
-        garde.afficher() #Si garde dernier afficher, lui cacher joueur.
+        niveau_1.afficher() 
+        garde.afficher() 
 
         heros.ramasser_objet(item1, item2, item3)
         heros.endormir(garde)
@@ -216,8 +197,7 @@ def main() :
 
         Fenetre.rafraichissement()
 
-    main() #retour à la case départ
+    main() 
 
 if __name__ == "__main__" : 
-    #test()
     main()
