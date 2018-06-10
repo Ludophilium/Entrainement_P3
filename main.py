@@ -11,7 +11,7 @@ class Fenetre :
     TITRE = "Project (Mc)GYVR"  
     COTE_SPRITE = 30 
     RESOLUTION = [15*COTE_SPRITE,15*COTE_SPRITE] 
-    ICONE_PTH = pygame.image.load("mur.png") 
+    ICONE_PTH = pygame.image.load("sprites/mur.png") 
 
     FENETRE = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE) 
     TITLE_FEN = pygame.display.set_caption(TITRE)
@@ -25,8 +25,8 @@ class Niveau :
     
     def __init__(self, textver_pth) :
         self.textver_pth = textver_pth
-        self.fond = pygame.image.load("fond.jpg")
-        self.sprite_mur = pygame.image.load("mur.png") 
+        self.fond = pygame.image.load("sprites/fond.jpg")
+        self.sprite_mur = pygame.image.load("sprites/mur.png") 
     
     @property
     def listver (self) : 
@@ -151,14 +151,14 @@ class Item :
 def main() :
 
     niveau_1 = Niveau("level_1.txt")
-    garde = Personnage("kd.png",[7,14]) 
-    heros = Joueur("dk.png",[7,0], niveau_1)
+    garde = Personnage("sprites/kd.png",[7,14]) 
+    heros = Joueur("sprites/dk.png",[7,0], niveau_1)
     
     Item.positionner(3,niveau_1.listver)
 
-    item1 = Item(1, "item.png")
-    item2 = Item(2, "item.png")
-    item3 = Item(3, "item.png")
+    item1 = Item(1, "sprites/item.png")
+    item2 = Item(2, "sprites/item.png")
+    item3 = Item(3, "sprites/item.png")
 
     niveau_1.afficher() 
 
