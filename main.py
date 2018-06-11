@@ -182,10 +182,12 @@ def main() :
 
     niveau_1.afficher() 
 
+    pygame.key.set_repeat(100, 25)
+
     while heros.ko == False :
 
         pygame.time.Clock().tick(30)
-
+        
         for evt in pygame.event.get():
             if evt.type == pygame.QUIT or evt.type == pygame.KEYDOWN and evt.key == pygame.K_ESCAPE : 
                 pygame.quit()
