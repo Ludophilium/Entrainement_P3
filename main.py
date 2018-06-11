@@ -44,7 +44,7 @@ class Niveau :
 
         for y, a in enumerate(self.listver) : 
             for x,b in enumerate(a) : 
-                if b == 'w' : 
+                if b == 'W' : 
                     Fenetre.FENETRE.blit(sprite_mur_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE]) 
 
 class Personnage : 
@@ -79,17 +79,37 @@ class Joueur (Personnage) :
 
     def deplacer(self, direction) : 
 
-        if direction == 'droite' and self.X+1<len(self.nl[0]) and self.nl[self.Y][self.X+1] != 'w' : 
-            self.position[0] += 1 
+        if direction == 'droite' :
+        
+            if self.X+1<len(self.nl[0]) and self.nl[self.Y][self.X+1] != 'W' : 
+                self.position[0] += 1
 
-        if direction == 'bas' and self.Y+1 < len(self.nl) and self.nl[self.Y+1][self.X] != 'w' : 
-            self.position[1] += 1 
+            elif self.X+1 == len(self.nl[0]) and self.nl[self.Y][self.X-14] != 'W' : 
+                self.position[0] = 0
+
+        if direction == 'bas' :
+            
+            if self.Y+1 < len(self.nl) and self.nl[self.Y+1][self.X] != 'W' : 
+                self.position[1] += 1
+            
+            elif self.Y+1 == len(self.nl) and self.nl[self.Y-14][self.X] != 'W' : 
+                self.position[1] = 0 
           
-        if direction == 'haut' and self.Y-1 >= 0 and self.nl[self.Y-1][self.X] != 'w' : 
-            self.position[1] -= 1
+        if direction == 'haut' :
+            
+            if self.Y-1 >= 0 and self.nl[self.Y-1][self.X] != 'W' : 
+                self.position[1] -= 1
 
-        if direction == 'gauche' and self.X-1 >=0 and self.nl[self.Y][self.X-1] != 'w' : 
-            self.position[0] -= 1
+            elif self.Y-1 < 0 and self.nl[self.Y+14][self.X] != 'W' : 
+                self.position[1] = 14
+
+        if direction == 'gauche' : 
+            
+            if self.X-1 >=0 and self.nl[self.Y][self.X-1] != 'W' : 
+                self.position[0] -= 1
+            
+            elif self.X-1 <0 and self.nl[self.Y][self.X+14] != 'W' :
+                self.position[0] = 14
 
     def ramasser_objet(self, *items) : 
         
@@ -151,8 +171,8 @@ class Item :
 def main() :
 
     niveau_1 = Niveau("level_1.txt")
-    garde = Personnage("sprites/kd.png",[7,14]) 
-    heros = Joueur("sprites/dk.png",[7,0], niveau_1)
+    garde = Personnage("sprites/kd.png",[14,14]) 
+    heros = Joueur("sprites/dk.png",[0,0], niveau_1)
     
     Item.positionner(3,niveau_1.listver)
 
