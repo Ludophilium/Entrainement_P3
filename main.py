@@ -26,7 +26,8 @@ class Niveau :
     def __init__(self, textver_pth) :
         self.textver_pth = textver_pth
         self.fond = pygame.image.load("sprites/fond_n.png")
-        self.sprite_mur = pygame.image.load("sprites/mur2.png") 
+        self.sprite_mur = pygame.image.load("sprites/mur2.png")
+        self.sprite_lig = pygame.image.load("sprites/lig.png")
     
     @property
     def listver (self) : 
@@ -36,16 +37,23 @@ class Niveau :
                 l += [list(x.strip('\n'))] 
             return l
     
-    def afficher(self) : 
+    def afficher(self, garde) : 
         fond_pf = self.fond.convert()
-        sprite_mur_pf = self.sprite_mur.convert() 
+        sprite_mur_pf = self.sprite_mur.convert()
+        sprite_lig_pf = self.sprite_lig.convert_alpha()
 
         Fenetre.FENETRE.blit(fond_pf, [0,0]) 
 
         for y, a in enumerate(self.listver) : 
             for x,b in enumerate(a) : 
                 if b == 'W' : 
-                    Fenetre.FENETRE.blit(sprite_mur_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE]) 
+                    Fenetre.FENETRE.blit(sprite_mur_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE])
+                if b == 'U' and garde.orientation == 'haut' : 
+                    Fenetre.FENETRE.blit(sprite_lig_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE])
+                if b == 'L' and garde.orientation == 'gauche' :
+                    Fenetre.FENETRE.blit(sprite_lig_pf, [x*Fenetre.COTE_SPRITE, y*Fenetre.COTE_SPRITE])
+                    
+                
 
 class Personnage : 
   
@@ -71,7 +79,7 @@ class Personnage :
     def orienter (self) :
         self.count += 1
 
-        if self.count % 100 == 0 : 
+        if self.count % 30 == 0 : 
             if self.orientation == 'gauche' : 
                 self.sprite = pygame.transform.rotate (self.sprite, -90)
                 self.orientation = "haut" 
@@ -137,22 +145,27 @@ class Joueur (Personnage) :
                     print(self.objets)
 
     def endormir (self, garde) : 
-        if self.position == garde.position :
+        
+        surveille = dict(gauche = [garde.position,[13,14], [12,14], [11,14], [10,14], [9,14]], haut = [garde.position, [14,13], [14,12], [14,11], [14,10], [14,9]])
+
+        if self.position in surveille[garde.orientation] :
             
-            if sorted(self.objets) == [1,2,3] :
-                if self.orientation == 'droite' and garde.orientation == 'gauche' or self.orientation == 'bas' and garde.orientation == 'haut' :
-                    self.ko = True
-                    for x in range(15) :
-                        print("What... What have you done...")
-                        #pygame.time.wait(1*1000)
-                        #time.sleep(1)
-            
-                elif self.orientation == 'droite' and garde.orientation == 'haut' or self.orientation == 'bas' and garde.orientation == 'gauche' and sorted(self.objets) == [1,2,3] :
+            if sorted(self.objets) == [1,2,3] and self.position == garde.position :
+               
+                if self.orientation == 'droite' and garde.orientation == 'haut' or self.orientation == 'bas' and garde.orientation == 'gauche' :
                     garde.ko = True
                     print("Geniaaal ! Tu as gagné ! Merci d'avoir joué")
                     #pygame.time.wait(3*1000)
                     pygame.quit()
                     sys.exit()
+                
+                else :
+                    self.ko = True
+                    for x in range(15) :
+                        print("What... What have you done...")
+                        #pygame.time.wait(1*1000)
+                        #time.sleep(1)
+                      
             else : 
                 self.ko = True
                 for x in range(15) :
@@ -204,7 +217,7 @@ def main() :
     item2 = Item(2, "sprites/item.png")
     item3 = Item(3, "sprites/item.png")
 
-    niveau_1.afficher()
+    niveau_1.afficher(garde)
 
     pygame.key.set_repeat(100, 25)
 
@@ -229,7 +242,7 @@ def main() :
             if evt.type == pygame.KEYDOWN and evt.key == pygame.K_LEFT : 
                 heros.deplacer("gauche")
 
-        niveau_1.afficher() 
+        niveau_1.afficher(garde) 
         garde.orienter()
         garde.afficher() 
 
